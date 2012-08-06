@@ -20,8 +20,16 @@
 default[:collectd][:base_dir] = "/var/lib/collectd"
 default[:collectd][:plugin_dir] = "/usr/lib/collectd"
 default[:collectd][:types_db] = ["/usr/share/collectd/types.db"]
+default[:collectd][:collectd_conf_file]        = "/etc/collectd/collectd.conf"
 default[:collectd][:interval] = 10
 default[:collectd][:read_threads] = 5
 
 default[:collectd][:collectd_web][:path] = "/srv/collectd_web"
 default[:collectd][:collectd_web][:hostname] = "collectd"
+
+default[:collectd][:graphite][:host]             = 
+default[:collectd][:graphite][:port]             = "2003"
+default[:collectd][:graphite][:prefix]           = Chef::Config[:solo] == true ? "chef-solo-" : " #{node[:chef_environment]}-"
+default[:collectd][:graphite][:escape_character] = "_"
+default[:collectd][:graphite][:always_append_ds] = false
+default[:collectd][:graphite][:store_rates]      = false
