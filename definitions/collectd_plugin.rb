@@ -25,12 +25,19 @@ define :collectd_plugin, :options => {}, :template => nil, :cookbook => nil do
     if params[:template].nil?
       source "plugin.conf.erb"
       cookbook params[:cookbook] || "collectd"
+      variables :name=>params[:name], :options=>params[:options]
+      notifies :restart, resources(:service => "collectd")
+    elsif params[:name] == "write_graphite"
+      source "write_graphite.conf.erb"
+      cookbook params[:cookbook] || "collectd"
+      variables :name=>params[:name], :options=>params[:options]
+      notifies :restart, resources(:service => "collectd") 
     else
       source params[:template]
       cookbook params[:cookbook]
+      variables :name=>params[:name], :options=>params[:options]
+      notifies :restart, resources(:service => "collectd")
     end
-    variables :name=>params[:name], :options=>params[:options]
-    notifies :restart, resources(:service => "collectd")
   end
 end
 
