@@ -24,12 +24,12 @@ define :collectd_plugin, :options => {}, :template => nil, :cookbook => nil do
     mode "644"
     if params[:template].nil?
       source "plugin.conf.erb"
-      cookbook params[:cookbook] || "collectd"
+      cookbook params[:cookbook] || "chef-collectd"
       variables :name=>params[:name], :options=>params[:options]
       notifies :restart, resources(:service => "collectd")
     elsif params[:name] == "write_graphite"
       source "write_graphite.conf.erb"
-      cookbook params[:cookbook] || "collectd"
+      cookbook params[:cookbook] || "chef-collectd"
       variables :name=>params[:name], :options=>params[:options]
       notifies :restart, resources(:service => "collectd") 
     else
@@ -48,7 +48,7 @@ define :collectd_python_plugin, :options => {}, :module => nil, :path => nil do
     collectd_plugin "python" do
       options :paths=>[node[:collectd][:plugin_dir]], :modules=>{}
       template "python_plugin.conf.erb"
-      cookbook "collectd"
+      cookbook "chef-collectd"
     end
     retry
   end
