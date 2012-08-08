@@ -1,0 +1,14 @@
+LoadPlugin write_graphite
+<Plugin write_graphite>
+  <Carbon>
+<% if not @options.empty? %>
+  <% @options.each_pair do |key, value|
+    if value.is_a? Array 
+      value.each do |subvalue| %>
+  <%= collectd_key(key) %> <%= collectd_option(subvalue) %>
+  <% end else %>
+  <%= collectd_key(key) %> <%= collectd_option(value) %>
+  <% end end %>
+  <% end %>
+  </Carbon>
+</Plugin>
