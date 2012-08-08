@@ -17,9 +17,54 @@
 # limitations under the License.
 #
 
-package "collectd" do
-  package_name "collectd-core"
+case node[:platform]
+when "ubuntu"
+  package "collectd" do
+    package_name "collectd-core"
+  end
+when "centos"
+
+  case node[:collectd][:install_method]
+  when "package"
+    package "collectd" do
+      package_name "collectd"
+    end
+
+  when "source"
+
+    version = node[:collectd][:source][:version]
+    %w{perl-devel make automake gcc lm_sensors-devel mysql-devel rrdtool-devel net-snmp-devel liboping-devel}.each do |p|
+      package "#{p}" do
+        package_name p
+      end
+    end
+
+    remote_file "collectd-#{version}.tar.gz" do
+      source "http://collectd.org/files/collectd-#{version}.tar.gz"
+      action :create_if_missing 
+    end
+
+    bash "install collectd" do
+      cwd Chef::Config[:file_cache_path]
+      code <<-EOH 
+      tar xzf collectd-#{version}.tar.gz
+      cd collectd-#{version}
+      ./configure 
+      make && make install
+      EOH
+    end
+
+  end
+  template "/etc/rc.d/init.d/collectd" do
+    source "collectd-init.erb"
+    owner "root"
+    group "root"
+    mode "755"
+    variables(:collectd_conf_file => node[:collectd][:collectd_conf_file])
+  end
 end
+
+
 
 service "collectd" do
   supports :restart => true, :status => true
@@ -33,7 +78,7 @@ end
 
 directory "/etc/collectd/plugins" do
   owner "root"
-  group "root"
+  group "root" 
   mode "755"
 end
 
