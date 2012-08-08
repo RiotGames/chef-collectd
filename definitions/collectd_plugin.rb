@@ -27,14 +27,14 @@ define :collectd_plugin, :options => {}, :template => nil, :cookbook => nil do
       cookbook params[:cookbook] || "chef-collectd"
       variables :name=>params[:name], :options=>params[:options]
       notifies :restart, resources(:service => "collectd")
-    elsif params[:name] == "write_graphite"
-      source "write_graphite.conf.erb"
+    elsif params[:template] == "write_graphite.conf.erb"
+      source params[:template]
       cookbook params[:cookbook] || "chef-collectd"
       variables :name=>params[:name], :options=>params[:options]
       notifies :restart, resources(:service => "collectd") 
     else
       source params[:template]
-      cookbook params[:cookbook]
+      cookbook params[:cookbook] || "chef-collectd"
       variables :name=>params[:name], :options=>params[:options]
       notifies :restart, resources(:service => "collectd")
     end
