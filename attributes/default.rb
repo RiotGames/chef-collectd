@@ -17,17 +17,21 @@
 # limitations under the License.
 #
 
-default[:collectd][:base_dir] = "/var/lib/collectd"
-default[:collectd][:plugin_dir] = "/usr/lib/collectd"
-default[:collectd][:types_db] = ["/usr/share/collectd/types.db"]
-default[:collectd][:collectd_conf_file]        = "/etc/collectd/collectd.conf"
-default[:collectd][:interval] = 10
-default[:collectd][:read_threads] = 5
+default[:collectd][:base_dir]                    = "/var/lib/collectd"
+default[:collectd][:plugin_dir]                  = "/usr/lib/collectd"
+default[:collectd][:types_db]                    = ["/usr/share/collectd/types.db"]
+default[:collectd][:collectd_conf_file]          = "/etc/collectd/collectd.conf"
+default[:collectd][:interval]                    = 10
+default[:collectd][:read_threads]                = 5
 
-default[:collectd][:collectd_web][:path] = "/srv/collectd_web"
-default[:collectd][:collectd_web][:hostname] = "collectd"
+default[:collectd][:collectd_web][:path]         = "/srv/collectd_web"
+default[:collectd][:collectd_web][:hostname]     = "collectd"
 
-default[:collectd][:graphite][:host]             = 
+default[:collectd][:install_method]                = "package"
+default[:collectd][:source][:version]            = "5.1.0"
+
+default[:collectd][:ping][:host]                 = Chef::Config[:solo] == true ? node[:network][:default_gateway] : "#{node[:chef_client][:server_url].gsub('https://', '')}" 
+default[:collectd][:graphite][:host]             = node[:fqdn]
 default[:collectd][:graphite][:port]             = "2003"
 default[:collectd][:graphite][:prefix]           = Chef::Config[:solo] == true ? "chef-solo-" : " #{node[:chef_environment]}-"
 default[:collectd][:graphite][:escape_character] = "_"
